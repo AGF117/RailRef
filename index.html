@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RailRef</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+<style>
+body{font-family:Arial;margin:20px}
+button,input,select{margin:4px;padding:8px}
+</style>
+</head>
+<body>
+<h1>🚂 RailRef</h1>
+<p>PWA preparada para instalación en Android.</p>
+<input placeholder="Buscar referencia, almacén o nombre">
+<br>
+<button>🗺️ Planos</button>
+<button>➕ Añadir pieza</button>
+<button>💾 Copia de seguridad</button>
+</body>
+</html>
