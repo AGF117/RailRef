@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RailRef</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+
+let database = [];
+
+async function loadDatabase() {
+  try {
+    const response = await fetch('railref_database_app_v2.json');
+    database = await response.json();
+    document.getElementById('status').textContent =
+      `Base de datos cargada: ${database.length} referencias`;
+  } catch (e) {
+    document.getElementById('status').textContent =
+      'No se pudo cargar la base de datos.';
+  }
+}
+
+function searchParts() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const results = database.filter(p =>
+    (p.referencia || '').toLowerCase().includes(q) ||
+    (p.descripcion || '').toLowerCase().includes(q)
+  ).slice(0,50);
+
+  const container = document.getElementById('results');
+  container.innerHTML = '';
+
+  results.forEach(item => {
+    const div = document.createElement('div');
+    div.className='card';
+    div.innerHTML = `
+      <h3>${item.referencia}</h3>
+      <b>${item.descripcion}</b><br>
+      Fabricante: ${item.fabricante}<br>
+      Lámina: ${item.lamina}<br>
+      Conjunto: ${item.conjunto}<br>
+      <button onclick='showDetail(${JSON.stringify(JSON.stringify(item))})'>Ver ficha</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function showDetail(itemJson){
+  const item = JSON.parse(itemJson);
+  document.getElementById('detail').innerHTML = `
+    <h2>${item.referencia}</h2>
+    <p><b>${item.descripcion}</b></p>
+    <p>Fabricante: ${item.fabricante}</p>
+    <p>Lámina: ${item.lamina}</p>
+    <p>Conjunto: ${item.conjunto}</p>
+    <p>Página catálogo: ${item.pagina}</p>
+    <p>Compatible con: ${(item.compatible_con || []).join(', ')}</p>
+  `;
+}
+window.onload = loadDatabase;
+</script>
+<style>
+body{font-family:Arial;margin:20px}
+button,input{margin:4px;padding:8px}
+.card{border:1px solid #ccc;padding:10px;margin:8px;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>🚂 RailRef</h1>
+<p id="status">Cargando base de datos...</p>
+
+<input id="search" placeholder="Buscar referencia o descripción" oninput="searchParts()">
+
+<div id="results"></div>
+<hr>
+<div id="detail"><i>Selecciona una referencia para ver la ficha.</i></div>
+
+</body>
+</html>
